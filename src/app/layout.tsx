@@ -35,6 +35,17 @@ export const metadata: Metadata = {
     title: "Telos — Small Steps. Great Journeys.",
     description: "A calmer, more intentional way to move forward. Focus on less, track daily intentions, reflect with journal entries, and watch your growth accumulate quietly.",
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({

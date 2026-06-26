@@ -1,0 +1,228 @@
+.hero {
+  height: 250vh;
+  background: #0a0a0a;
+  position: relative;
+}
+
+.stickyContainer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  will-change: transform, opacity;
+}
+
+.fog {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 55% 40% at 38% 52%, rgba(196, 169, 107, 0.055) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 35% at 62% 42%, rgba(180, 140, 80, 0.04) 0%, transparent 65%),
+    radial-gradient(ellipse 80% 60% at 50% 40%, #1a1612 0%, #0a0a0a 68%);
+  will-change: transform;
+}
+
+.eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease-expo) 0.3s forwards;
+}
+
+.title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(5rem, 14vw, 11rem);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  line-height: 0.9;
+  color: var(--smoke);
+  margin-bottom: 2rem;
+  opacity: 1;
+}
+
+.telosLetter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px);
+  animation: letterArrive 1.2s var(--ease-expo) forwards;
+}
+
+@keyframes letterArrive {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tagline {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ash);
+  letter-spacing: 0.04em;
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 1.4s var(--ease-expo) 0.8s forwards;
+}
+
+.sub {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--ash);
+  letter-spacing: 0.08em;
+  margin-bottom: 3.5rem;
+  opacity: 0;
+  animation: fadeUp 1.4s var(--ease-expo) 1s forwards;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  color: var(--smoke);
+  text-decoration: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: 3rem;
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(244, 242, 239, 0.18);
+  transition: all 0.4s var(--ease-silk);
+  opacity: 0;
+  animation: fadeUp 1.2s var(--ease-expo) 1.2s forwards;
+  position: relative;
+  z-index: 2;
+}
+
+.cta:hover {
+  background: rgba(244, 242, 239, 0.05);
+  border-color: rgba(244, 242, 239, 0.38);
+  transform: translateY(-2px);
+}
+
+.cta svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.55;
+}
+
+/* ─── HERO PHONE WRAP ─── */
+.phoneWrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  /* Start hidden, Framer Motion takes over y/scale/opacity */
+  z-index: 3;
+  will-change: transform, opacity, filter;
+  pointer-events: none;
+}
+
+.phoneWrap::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 10%;
+  right: 10%;
+  height: 60px;
+  background: radial-gradient(ellipse at center, rgba(196, 169, 107, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: phoneGlow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.phoneSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Particles */
+.particlesContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  background: var(--gold);
+  border-radius: 50%;
+  opacity: 0;
+  animation: float var(--dur) var(--delay) infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: var(--op);
+  }
+  80% {
+    opacity: var(--op);
+  }
+  50% {
+    transform: translateY(var(--dy)) translateX(var(--dx));
+  }
+}
+
+/* ─── SCROLL INDICATOR ─── */
+.scrollHint {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  opacity: 0;
+  animation: fadeUp 1s var(--ease-expo) 2.2s forwards;
+  z-index: 2;
+}
+
+.scrollHint span {
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.scrollLine {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollPulse 2.5s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 4rem;
+  }
+}

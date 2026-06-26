@@ -1,0 +1,42 @@
+.hairline {
+  position: relative;
+  height: 1px;
+  background: transparent;
+  overflow: visible;
+  margin: 0;
+}
+
+.hairline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 0%;
+  background: linear-gradient(to right, transparent, rgba(196, 169, 107, 0.55), transparent);
+}
+
+.draw::after {
+  animation: hairlineDraw 1.2s var(--ease-expo) forwards,
+             hairlineFade 0.6s ease 1.4s forwards;
+}
+
+@keyframes hairlineDraw {
+  from {
+    width: 0%;
+    left: 0%;
+  }
+  to {
+    width: 100%;
+    left: 0%;
+  }
+}
+
+@keyframes hairlineFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,164 @@
+Privacy Policy
+Last updated: May 1, 2026
+
+Welcome to Telos. We are committed to protecting your privacy and ensuring you understand how your data is handled. This Privacy Policy explains what information we collect, how we use it, and your rights regarding your personal data.
+
+Data Collection
+Telos is designed with your privacy in mind. Here's what you need to know about data collection:
+
+Local Storage: Your habit data, including habit names, completion records, and preferences, is stored locally on your device. This data never leaves your device unless you choose to back it up.
+No Account Required: Telos does not require you to create an account or provide personal information to use the app.
+Device Information: We may collect anonymous device information such as device type, operating system version, and app version for crash reporting and improving the app experience.
+Third-Party Services
+Telos uses third-party services that may collect information used to identify you. We want to be transparent about these services:
+
+Google AdMob
+We use Google AdMob to serve advertisements in our app. AdMob may use device identifiers, cookies, and similar technologies to serve personalized or non-personalized ads based on your preferences. AdMob collects:
+
+Device advertising identifiers
+IP address
+Device and browser information
+Ad interaction data
+For more information, please review Google's Privacy & Terms.
+
+Adapty
+We use Adapty to manage in-app subscriptions. Adapty may process purchase receipts and anonymous user identifiers to verify subscriptions and provide analytics. Adapty does not have access to your payment details, as all payments are processed securely through the App Store or Google Play.
+
+How We Use Your Data
+We use the information we collect for the following purposes:
+
+To provide the core habit tracking functionality
+To serve relevant advertisements through AdMob
+To process subscription payments and manage your premium access
+To improve app performance and fix bugs
+To analyze app usage patterns (anonymously) to improve features
+Data Deletion
+Since your habit data is stored locally on your device, you can delete your data at any time by:
+
+Clearing the app data through your device settings
+Uninstalling the Telos app from your device
+To opt out of personalized advertising, you can adjust your device's advertising settings or contact us to request data deletion from third-party services.
+
+Children's Privacy
+Telos is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us so we can take appropriate action.
+
+Changes to This Privacy Policy
+We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the “Last updated” date at the top of this page. You are advised to review this Privacy Policy periodically for any changes.
+
+Contact Us
+If you have any questions or concerns about this Privacy Policy, please contact us at:
+
+alrawiweb@gmail.com
+
+
+
+Terms of Service
+Last updated: May 1, 2026
+
+Welcome to Telos. By downloading, installing, or using our application, you agree to be bound by these Terms of Service. Please read them carefully before using the app.
+
+Acceptance of Terms
+By accessing or using Telos, you agree to these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use the app. We reserve the right to modify these terms at any time, and your continued use of the app constitutes acceptance of any changes.
+
+Subscription Terms
+Telos offers premium subscription plans that unlock additional features. Please review the following subscription terms carefully:
+
+What Premium Includes
+A Telos Premium subscription grants you access to ad-free usage, unlimited habits, advanced statistics, and all premium features as described in the app.
+
+Subscription Plans & Pricing
+Monthly: Billed monthly at the price displayed in the app at the time of purchase.
+Yearly: Billed annually at the price displayed in the app at the time of purchase.
+Prices may vary by region and are subject to change. Current pricing is always displayed in the app before purchase.
+
+Payment & Billing
+Payment will be charged to your Apple ID account or Google Play account at confirmation of purchase.
+Your subscription automatically renews unless auto-renewal is turned off at least 24 hours before the end of the current billing period.
+Your account will be charged for renewal within 24 hours prior to the end of the current period.
+The renewal cost will be the same as the original subscription price unless otherwise notified in advance.
+Managing Your Subscription
+You can manage or cancel your subscription at any time through your device's account settings:
+
+iOS:Go to Settings > [Your Name] > Subscriptions > Telos
+Android:Go to Google Play Store > Menu > Subscriptions > Telos
+Cancellation will take effect at the end of the current billing period. You will retain access to premium features until that date.
+
+User Conduct
+When using Telos, you agree not to:
+
+Use the app for any illegal or unauthorized purpose
+Attempt to reverse engineer, decompile, or disassemble the app
+Modify, adapt, or create derivative works based on the app
+Exploit any bugs or vulnerabilities in the app
+Use any automated systems or software to extract data from the app
+Interfere with or disrupt the app's functionality or servers
+Intellectual Property
+The Telos app, including its design, graphics, code, content, and all associated intellectual property, is owned by us and protected by copyright, trademark, and other intellectual property laws. You may not copy, modify, distribute, sell, or lease any part of our app or its content without our express written permission.
+
+Disclaimer of Warranties
+Telos is provided “as is” and “as available” without warranties of any kind, either express or implied. We do not warrant that the app will be uninterrupted, error-free, or free of viruses or other harmful components. We make no guarantees regarding the accuracy, reliability, or completeness of any content or information provided through the app.
+
+Limitation of Liability
+To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, loss of profits, or any other intangible losses, resulting from:
+
+Your use or inability to use the app
+Any unauthorized access to or alteration of your data
+Any bugs, viruses, or other harmful code transmitted through the app
+Any errors, inaccuracies, or omissions in the app's content
+Loss of habit data or tracking records
+Third-Party Services
+Telos may contain links to or integrate with third-party services (such as payment processors or advertising networks). We are not responsible for the content, privacy policies, or practices of these third-party services. Your interactions with third-party services are governed by their respective terms and policies.
+
+Termination
+We reserve the right to suspend or terminate your access to Telos at any time, without prior notice, for conduct that we believe violates these Terms of Service or is harmful to other users, us, or third parties. Upon termination, your right to use the app will immediately cease.
+
+Governing Law
+These Terms of Service shall be governed by and construed in accordance with applicable laws, without regard to conflict of law principles. Any disputes arising from these terms or your use of the app shall be resolved in the appropriate courts of jurisdiction.
+
+Changes to These Terms
+We may update these Terms of Service from time to time. We will notify you of any changes by posting the new Terms on this page and updating the “Last updated” date. Your continued use of the app after any changes constitutes acceptance of the new Terms.
+
+Contact Us
+If you have any questions about these Terms of Service, please contact us at:
+
+alrawiweb@gmail.com
+
+
+
+
+
+
+
+
+Account Deletion
+Last updated: May 1, 2026
+
+We understand that you may wish to delete your account and associated data from Telos. This page provides information on how to request account deletion.
+
+How to Request Account Deletion
+To request the deletion of your account and associated data, please email us at alrawiweb@gmail.com with the subject “Account Deletion Request”.
+
+What Happens After You Request Deletion
+Once you submit your account deletion request:
+
+We will verify your identity to ensure the request is legitimate
+We will process your deletion request within 30 days
+All account data associated with your account will be permanently deleted
+You will receive a confirmation email once the deletion is complete
+Data Deletion Details
+Please note the following regarding data deletion:
+
+Local Data: Since your habit data is stored locally on your device, you can delete it immediately by clearing the app data through your device settings or uninstalling the app.
+Account Records: We will delete all records associated with your account from our servers.
+Legal Records: We may retain certain information as required by law or for legitimate business purposes, such as fraud prevention.
+Subscription Information
+If you have an active subscription, please cancel it through your App Store or Google Play account before or at the time of your deletion request. Account deletion does not automatically cancel active subscriptions. You are responsible for managing your subscription status independently.
+
+Questions?
+If you have any questions about the account deletion process, please contact us at:
+
+alrawiweb@gmail.com
+
+
+
+

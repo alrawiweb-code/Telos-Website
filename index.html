@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telos — Small Steps. Great Journeys.</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@200;300;400;500&display=swap');
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --ink: #0a0a0a;
+      --ink-soft: #1a1a1a;
+      --smoke: #f4f2ef;
+      --mist: #e8e5e0;
+      --ash: #9a9590;
+      --gold: #c4a96b;
+      --gold-pale: rgba(196, 169, 107, 0.15);
+      --cream: #faf8f5;
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --ease-silk: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--smoke);
+      font-family: var(--font-body);
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ─── NOISE TEXTURE ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ─── HERO VOLUMETRIC FOG ─── */
+    #hero-fog {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      /* Two radial 'fog lobes' that shift slightly on scroll via JS transform */
+      background:
+        radial-gradient(ellipse 55% 40% at 38% 52%, rgba(196, 169, 107, 0.055) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 62% 42%, rgba(180, 140, 80, 0.04) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 60% at 50% 40%, #1a1612 0%, #0a0a0a 68%);
+      will-change: transform;
+      transition: transform 0.05s linear;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 3.5rem;
+      transition: background 0.6s var(--ease-silk), backdrop-filter 0.6s;
+    }
+
+    nav.scrolled {
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      color: var(--smoke);
+      text-decoration: none;
+    }
+
+    /* ─── NAV CTA: TRACED BORDER ON HOVER ─── */
+    .nav-cta {
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      text-decoration: none;
+      padding: 0.65rem 1.5rem;
+      border-radius: 2rem;
+      position: relative;
+      transition: color 0.35s var(--ease-silk), background 0.35s var(--ease-silk);
+      /* Static dim border always present */
+      border: 1px solid rgba(244, 242, 239, 0.2);
+    }
+
+    /* The tracing pseudo-element: conic-gradient sweep on hover */
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 2rem;
+      background: conic-gradient(from -90deg,
+          rgba(196, 169, 107, 0.9) 0deg,
+          rgba(196, 169, 107, 0.9) var(--sweep, 0deg),
+          transparent var(--sweep, 0deg));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 1px;
+      opacity: 0;
+      transition: opacity 0.15s;
+      pointer-events: none;
+    }
+
+    .nav-cta:hover::before {
+      opacity: 1;
+    }
+
+    .nav-cta:hover {
+      background: rgba(244, 242, 239, 0.04);
+      border-color: transparent;
+      color: var(--smoke);
+    }
+
+    /* ─── SECTION SHARED ─── */
+    section {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      height: 140vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: #0a0a0a;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1.2s var(--ease-expo) 0.3s forwards;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── TELOS letterform stagger ─── */
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 14vw, 11rem);
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      line-height: 0.9;
+      color: var(--smoke);
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 2;
+      /* Letters are wrapped in spans by JS; base opacity keeps the container visible */
+      opacity: 1;
+    }
+
+    .hero-title .telos-letter {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(22px);
+      animation: letterArrive 1.2s var(--ease-expo) forwards;
+    }
+
+    @keyframes letterArrive {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hero-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ash);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 1.4s var(--ease-expo) 0.8s forwards;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-sub {
+      font-size: 0.85rem;
+      font-weight: 300;
+      color: var(--ash);
+      letter-spacing: 0.08em;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 1.4s var(--ease-expo) 1s forwards;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ─── HERO PHONE WRAP ─── */
+    .hero-phone-wrap {
+      position: absolute;
+      bottom: -8vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      opacity: 0;
+      animation: riseIn 2s var(--ease-expo) 1.4s forwards;
+      z-index: 2;
+      will-change: transform, opacity;
+    }
+
+    /* Soft glow beneath phone that pulses with particles */
+    .hero-phone-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 10%;
+      right: 10%;
+      height: 60px;
+      background: radial-gradient(ellipse at center, rgba(196, 169, 107, 0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: phoneGlow 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes phoneGlow {
+
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: scaleX(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scaleX(1.12);
+      }
+    }
+
+    .phone-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Particle field */
+    #particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float var(--dur, 8s) var(--delay, 0s) infinite ease-in-out;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: var(--op, 0.4);
+      }
+
+      80% {
+        opacity: var(--op, 0.4);
+      }
+
+      50% {
+        transform: translateY(calc(var(--dy, -40px))) translateX(calc(var(--dx, 20px)));
+      }
+    }
+
+    /* ─── SCROLL INDICATOR ─── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-expo) 2.2s forwards;
+      z-index: 2;
+    }
+
+    .scroll-hint span {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ash);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+
+      0%,
+      100% {
+        transform: scaleY(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scaleY(0.5);
+        opacity: 0.4;
+      }
+    }
+
+    /* ─── GOLD HAIRLINE TRANSITION ─── */
+    .gold-hairline {
+      position: relative;
+      height: 1px;
+      background: transparent;
+      overflow: visible;
+      margin: 0;
+    }
+
+    .gold-hairline::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 1px;
+      width: 0%;
+      background: linear-gradient(to right, transparent, rgba(196, 169, 107, 0.55), transparent);
+      transition: none;
+    }
+
+    .gold-hairline.draw::after {
+      animation: hairlineDraw 1.2s var(--ease-expo) forwards,
+        hairlineFade 0.6s ease 1.4s forwards;
+    }
+
+    @keyframes hairlineDraw {
+      from {
+        width: 0%;
+        left: 0%;
+      }
+
+      to {
+        width: 100%;
+        left: 0%;
+      }
+    }
+
+    @keyframes hairlineFade {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    /* ─── SECTION 2: STILLNESS ─── */
+    #stillness {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      padding: 8rem 2rem;
+    }
+
+    .stillness-inner {
+      max-width: 780px;
+      text-align: center;
+    }
+
+    .stillness-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-expo);
+    }
+
+    .stillness-line {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--smoke);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1.2s var(--ease-expo);
+      margin-bottom: 0.5rem;
+    }
+
+    .stillness-line.italic {
+      font-style: italic;
+      color: var(--ash);
+    }
+
+    .stillness-line.delay1 {
+      transition-delay: 0.2s;
+    }
+
+    .stillness-line.delay2 {
+      transition-delay: 0.5s;
+    }
+
+    .stillness-line.delay3 {
+      transition-delay: 0.8s;
+    }
+
+    /* "more" word: fractionally slower within the line */
+    .stillness-word-more {
+      display: inline-block;
+      transition: all 1.2s var(--ease-expo) 1.25s;
+      /* 0.05s later than the line's 1.2s */
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .stillness-word-normal {
+      display: inline-block;
+      transition: all 1.2s var(--ease-expo) 1.2s;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .reveal .stillness-label,
+    .reveal .stillness-line,
+    .reveal .stillness-word-more,
+    .reveal .stillness-word-normal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── SECTION LABELS / HEADINGS / BODY ─── */
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 0.8s var(--ease-expo);
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--smoke);
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-expo) 0.15s;
+    }
+
+    .section-body {
+      font-size: 0.9rem;
+      font-weight: 300;
+      line-height: 1.9;
+      color: var(--ash);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 1s var(--ease-expo) 0.3s;
+      max-width: 380px;
+    }
+
+    .reveal .section-label,
+    .reveal .section-heading,
+    .reveal .section-body {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── SECTION 3: INTENTIONS ─── */
+    #intentions {
+      min-height: 180vh;
+      display: flex;
+      align-items: flex-start;
+      background: #0d0d0b;
+      padding: 8rem 0;
+    }
+
+    .sticky-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 4rem;
+      gap: 4rem;
+    }
+
+    .sticky-text {
+      padding-top: 10rem;
+    }
+
+    .sticky-phone {
+      position: sticky;
+      top: 20vh;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ─── PHONE MOCKUP ─── */
+    .phone-mockup {
+      width: 240px;
+      /* Layered gradient frame: warm at top edge, deeper below */
+      background: linear-gradient(175deg, #1a1510 0%, #0f0d0b 60%);
+      border-radius: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      overflow: hidden;
+      position: relative;
+      /* Specular highlight: top-left 1px bright edge */
+      box-shadow:
+        0 0 0 0.5px rgba(255, 255, 255, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset -1px 0 0 rgba(0, 0, 0, 0.4),
+        0 40px 80px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 20px 40px rgba(196, 169, 107, 0.05);
+      filter: drop-shadow(0 8px 24px rgba(196, 169, 107, 0.04));
+    }
+
+    /* Specular left-edge highlight strip */
+    .phone-mockup::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8%;
+      bottom: 8%;
+      width: 1px;
+      background: linear-gradient(to bottom,
+          transparent 0%,
+          rgba(255, 255, 255, 0.25) 25%,
+          rgba(255, 255, 255, 0.14) 55%,
+          transparent 100%);
+      border-radius: 1px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    /* Bezel reflection: faint diagonal sheen */
+    .phone-mockup::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 36px;
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.025) 0%,
+          transparent 40%,
+          transparent 60%,
+          rgba(255, 255, 255, 0.01) 100%);
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    .phone-screen {
+      padding: 20px 16px;
+      min-height: 420px;
+      /* Screen inner glow — pulses via animation */
+      background: radial-gradient(ellipse 70% 50% at 50% 30%,
+          rgba(196, 169, 107, 0.045) 0%,
+          transparent 70%);
+      position: relative;
+      animation: screenPulse 5s ease-in-out infinite;
+    }
+
+    @keyframes screenPulse {
+
+      0%,
+      100% {
+        background-position: 50% 30%;
+        opacity: 1;
+      }
+
+      50% {
+        background: radial-gradient(ellipse 75% 55% at 50% 32%,
+            rgba(196, 169, 107, 0.07) 0%,
+            transparent 70%);
+      }
+    }
+
+    .phone-date {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: rgba(154, 149, 144, 0.45);
+      /* intentionally dimmer — date strip */
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .phone-day-strip {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+    }
+
+    .day-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      color: rgba(154, 149, 144, 0.4);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.4s ease;
+    }
+
+    .day-dot.active {
+      background: var(--gold);
+      color: var(--ink);
+      border-color: var(--gold);
+      font-weight: 500;
+    }
+
+    .phone-section-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 0.75rem;
+    }
+
+    .intention-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.5s ease;
+    }
+
+    /* Progressive brightness: items brighten toward center */
+    .intention-item:nth-child(3) .intention-text {
+      color: rgba(244, 242, 239, 0.6);
+    }
+
+    .intention-item:nth-child(4) .intention-text {
+      color: rgba(244, 242, 239, 0.85);
+    }
+
+    .intention-item:nth-child(5) .intention-text {
+      color: rgba(244, 242, 239, 0.95);
+    }
+
+    .intention-item:nth-child(6) .intention-text {
+      color: rgba(244, 242, 239, 0.7);
+    }
+
+    .intention-item:nth-child(7) .intention-text {
+      color: rgba(244, 242, 239, 0.5);
+    }
+
+    .intention-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .intention-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.13);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.5s ease;
+      position: relative;
+    }
+
+    .intention-circle.done {
+      border-color: var(--gold);
+      background: rgba(196, 169, 107, 0.13);
+    }
+
+    .intention-circle.done::after {
+      content: '';
+      width: 8px;
+      height: 5px;
+      border-left: 1.5px solid var(--gold);
+      border-bottom: 1.5px solid var(--gold);
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
+    }
+
+    .intention-text {
+      font-size: 0.72rem;
+      font-weight: 300;
+      color: rgba(244, 242, 239, 0.75);
+      letter-spacing: 0.02em;
+    }
+
+    .intention-text.done {
+      color: rgba(154, 149, 144, 0.55);
+      text-decoration: line-through;
+      text-decoration-color: rgba(154, 149, 144, 0.3);
+    }
+
+    .phone-progress-wrap {
+      margin-top: 1.25rem;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .progress-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-label span {
+      color: var(--gold);
+    }
+
+    .progress-bar {
+      height: 2px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--gold), #e8c97e);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 1s ease;
+    }
+
+    /* ─── SECTION: JOURNAL ─── */
+    #journal {
+      min-height: 120vh;
+      background: #0c0b09;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem;
+    }
+
+    .journal-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    /* ─── BOOK MOCKUP — with second page + bookmark ─── */
+    .book-wrap {
+      perspective: 1200px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .book {
+      width: 280px;
+      height: 340px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(-10deg) rotateX(3deg);
+      animation: bookFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes bookFloat {
+
+      0%,
+      100% {
+        transform: rotateY(-10deg) rotateX(3deg) translateY(0);
+      }
+
+      50% {
+        transform: rotateY(-10deg) rotateX(3deg) translateY(-12px);
+      }
+    }
+
+    /* Second page peeking behind — offset right, lighter tone */
+    .book-page-behind {
+      position: absolute;
+      inset: 4px;
+      left: 10px;
+      /* offset 6px right from main cover */
+      background: #252015;
+      border-radius: 3px 8px 8px 3px;
+      transform: translateZ(-8px);
+      border: 1px solid rgba(196, 169, 107, 0.06);
+    }
+
+    .book-cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #1e1a12 0%, #1a1611 50%, #161209 100%);
+      border-radius: 4px 10px 10px 4px;
+      border: 1px solid rgba(196, 169, 107, 0.18);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 14px;
+      background: #0f0d09;
+      border-radius: 4px 0 0 4px;
+      border-right: 1px solid rgba(196, 169, 107, 0.08);
+    }
+
+    /* Bookmark ribbon */
+    .book-bookmark {
+      position: absolute;
+      top: 0;
+      right: 32px;
+      width: 10px;
+      z-index: 5;
+    }
+
+    .book-bookmark::before {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 70px;
+      background: linear-gradient(to bottom, #8b1a1a, #6b1212);
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+      box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .book-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      margin-left: 14px;
+    }
+
+    .book-date {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: rgba(196, 169, 107, 0.38);
+      text-transform: uppercase;
+      margin-left: 14px;
+    }
+
+    .book-lines {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .book-line {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .book-line::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.11);
+      border-radius: 1px;
+      animation: writeLine 3s ease-in-out infinite;
+    }
+
+    .book-line:nth-child(1)::after {
+      width: 80%;
+      animation-delay: 0s;
+    }
+
+    .book-line:nth-child(2)::after {
+      width: 65%;
+      animation-delay: 0.2s;
+    }
+
+    .book-line:nth-child(3)::after {
+      width: 90%;
+      animation-delay: 0.4s;
+    }
+
+    .book-line:nth-child(4)::after {
+      width: 50%;
+      animation-delay: 0.6s;
+    }
+
+    .book-line:nth-child(5)::after {
+      width: 75%;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes writeLine {
+      0% {
+        opacity: 0.4;
+      }
+
+      50% {
+        opacity: 0.85;
+      }
+
+      100% {
+        opacity: 0.4;
+      }
+    }
+
+    .book-shadow {
+      position: absolute;
+      bottom: -20px;
+      left: 10%;
+      right: 10%;
+      height: 30px;
+      background: rgba(0, 0, 0, 0.55);
+      filter: blur(20px);
+      border-radius: 50%;
+    }
+
+    /* ─── SECTION: VOICE ─── */
+    #voice {
+      min-height: 80vh;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem;
+    }
+
+    .voice-inner {
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .waveform {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 60px;
+      margin: 3rem auto;
+    }
+
+    .wave-bar {
+      width: 3px;
+      background: var(--gold);
+      border-radius: 3px;
+      opacity: 0.6;
+      transform-origin: center;
+      /* JS drives these via inline style */
+    }
+
+    .transcribed-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--smoke);
+      line-height: 1.5;
+      position: relative;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-expo) 0.3s;
+    }
+
+    .reveal .transcribed-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background: var(--gold);
+      margin-left: 3px;
+      vertical-align: middle;
+      animation: blink 0.8s step-end infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* ─── SECTION: PRIVATE ─── */
+    #private {
+      min-height: 80vh;
+      background: #09090a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem;
+    }
+
+    .vault-inner {
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .vault-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 3rem;
+      position: relative;
+    }
+
+    .vault-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 1px solid rgba(196, 169, 107, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: vaultPulse 4s ease-in-out infinite;
+    }
+
+    .vault-ring::before,
+    .vault-ring::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(196, 169, 107, 0.07);
+      animation: vaultPulse 4s ease-in-out infinite;
+    }
+
+    .vault-ring::before {
+      inset: -12px;
+      animation-delay: 0.5s;
+    }
+
+    .vault-ring::after {
+      inset: -24px;
+      animation-delay: 1s;
+    }
+
+    @keyframes vaultPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.04);
+        opacity: 0.55;
+      }
+    }
+
+    .vault-lock {
+      font-size: 2rem;
+      color: var(--gold);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── SECTION: PROGRESS ─── */
+    #progress-section {
+      min-height: 80vh;
+      background: #0b0b09;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem;
+    }
+
+    .progress-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .streak-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .streak-cell {
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      transition: all 0.3s ease;
+    }
+
+    .streak-cell.done {
+      background: rgba(196, 169, 107, 0.28);
+      border-color: rgba(196, 169, 107, 0.38);
+    }
+
+    .streak-cell.today {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(196, 169, 107, 0.3);
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .stat-item {
+      flex: 1;
+    }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 300;
+      color: var(--smoke);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ash);
+      margin-top: 0.3rem;
+    }
+
+    /* ─── SECTION: BACKUP ─── */
+    #backup {
+      min-height: 60vh;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+    }
+
+    .backup-inner {
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .cloud-animation {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .cloud-device {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(196, 169, 107, 0.22);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--gold);
+      background: rgba(196, 169, 107, 0.04);
+    }
+
+    .cloud-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .cloud-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.35;
+      animation: cloudFlow 2s ease-in-out infinite;
+    }
+
+    .cloud-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .cloud-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes cloudFlow {
+
+      0%,
+      100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+      }
+
+      50% {
+        opacity: 0.75;
+        transform: scale(1.2);
+      }
+    }
+
+    /* ─── FINAL CTA ─── */
+    #cta-final {
+      min-height: 100vh;
+      /* JS will animate the radial gradient center point via CSS vars */
+      background: radial-gradient(ellipse 70% 60% at var(--rx, 50%) var(--ry, 50%), #1a1612 0%, #0a0a0a 70%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem;
+      position: relative;
+      /* The CSS var is updated by JS on a 12s loop */
+    }
+
+    .cta-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s var(--ease-expo);
+    }
+
+    .cta-headline {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--smoke);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: all 1.2s var(--ease-expo) 0.2s;
+    }
+
+    .cta-sub {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ash);
+      margin-bottom: 4rem;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 1s var(--ease-expo) 0.4s;
+    }
+
+    .reveal .cta-eyebrow,
+    .reveal .cta-headline,
+    .reveal .cta-sub {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cta-phone-final {
+      width: 200px;
+      margin: 0 auto 4rem;
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      transition: all 1.4s var(--ease-expo) 0.5s;
+      filter: drop-shadow(0 40px 60px rgba(196, 169, 107, 0.1));
+    }
+
+    .reveal .cta-phone-final {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: all 1s var(--ease-expo) 0.7s;
+    }
+
+    .reveal .cta-buttons {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── FINAL CTA PRIMARY BUTTON: shimmer sweep ─── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--smoke);
+      color: var(--ink);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 3rem;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      transition: background 0.35s var(--ease-silk), transform 0.35s var(--ease-silk), box-shadow 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Shimmer: a single 2px diagonal white line that sweeps once on hover */
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -80px;
+      width: 40px;
+      bottom: 0;
+      background: linear-gradient(105deg,
+          transparent 0%,
+          transparent 40%,
+          rgba(255, 255, 255, 0.55) 50%,
+          transparent 60%,
+          transparent 100%);
+      transform: skewX(-15deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: none;
+    }
+
+    .btn-primary:hover::after {
+      animation: shimmerSweep 0.55s var(--ease-expo) forwards;
+    }
+
+    @keyframes shimmerSweep {
+      0% {
+        left: -80px;
+        opacity: 1;
+      }
+
+      100% {
+        left: calc(100% + 40px);
+        opacity: 1;
+      }
+    }
+
+    .btn-primary:hover {
+      background: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(196, 169, 107, 0.28);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: transparent;
+      color: var(--smoke);
+      text-decoration: none;
+      padding: 1rem 2rem;
+      border-radius: 3rem;
+      font-size: 0.78rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      border: 1px solid rgba(244, 242, 239, 0.18);
+      transition: all 0.35s var(--ease-silk);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(244, 242, 239, 0.45);
+      background: rgba(244, 242, 239, 0.04);
+      transform: translateY(-2px);
+    }
+
+    /* ─── HERO CTA BUTTON ─── */
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: transparent;
+      color: var(--smoke);
+      text-decoration: none;
+      padding: 0.9rem 2.2rem;
+      border-radius: 3rem;
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      border: 1px solid rgba(244, 242, 239, 0.18);
+      transition: all 0.4s var(--ease-silk);
+      opacity: 0;
+      animation: fadeUp 1.2s var(--ease-expo) 1.2s forwards;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-cta:hover {
+      background: rgba(244, 242, 239, 0.05);
+      border-color: rgba(244, 242, 239, 0.38);
+      transform: translateY(-2px);
+    }
+
+    .hero-cta svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.55;
+    }
+
+    /* ─── GOLD RULE ─── */
+    .gold-rule {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      max-width: 200px;
+    }
+
+    .gold-rule::before,
+    .gold-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(196, 169, 107, 0.22);
+    }
+
+    .gold-rule-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.55;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 3rem;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    footer p {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: rgba(154, 149, 144, 0.35);
+      text-transform: uppercase;
+    }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav {
+        padding: 1.5rem 1.5rem;
+      }
+
+      .sticky-layout,
+      .journal-inner,
+      .progress-inner {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .sticky-phone {
+        position: relative;
+        top: auto;
+        height: auto;
+      }
+
+      .hero-title {
+        font-size: 4rem;
+      }
+
+      .book {
+        width: 220px;
+        height: 270px;
+      }
+    }
+
+    /* ─── REDUCED MOTION: collapse all animations gracefully ─── */
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.001ms !important;
+      }
+
+      .hero-title .telos-letter {
+        opacity: 1;
+        transform: none;
+      }
+
+      .stillness-word-more,
+      .stillness-word-normal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .gold-hairline.draw::after {
+        width: 100%;
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="mainNav">
+    <a href="#" class="nav-logo">TELOS</a>
+    <a href="https://play.google.com/store" class="nav-cta" id="navCta">Download</a>
+  </nav>
+
+  <!-- ─── SECTION 1: HERO ─── -->
+  <section id="hero">
+    <div id="hero-fog" aria-hidden="true"></div>
+    <div id="particles" aria-hidden="true"></div>
+
+    <p class="hero-eyebrow">Intentional Living</p>
+
+    <!-- Letters will be wrapped in spans by JS for stagger -->
+    <h1 class="hero-title" id="heroTitle">TELOS</h1>
+
+    <p class="hero-tagline">Small Steps. Great Journeys.</p>
+    <p class="hero-sub">A calmer way to move forward.</p>
+
+    <a href="https://play.google.com/store" class="hero-cta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <path d="M4 16l8 4 8-4M4 12l8 4 8-4M12 2L4 8l8 4 8-4-8-4z" />
+      </svg>
+      Download on Google Play
+    </a>
+
+    <!-- Refined phone SVG with specular + layered gradients -->
+    <div class="hero-phone-wrap" id="heroPhone">
+      <svg class="phone-svg" viewBox="0 0 260 490" xmlns="http://www.w3.org/2000/svg"
+        aria-label="Telos app interface preview" role="img">
+        <defs>
+          <!-- Phone body gradient: warm at top, deep below -->
+          <linearGradient id="phoneBody" x1="0%" y1="0%" x2="20%" y2="100%">
+            <stop offset="0%" stop-color="#1a1510" />
+            <stop offset="50%" stop-color="#111008" />
+            <stop offset="100%" stop-color="#0c0b09" />
+          </linearGradient>
+          <!-- Screen content depth gradient -->
+          <radialGradient id="screenDepth" cx="50%" cy="30%" r="65%">
+            <stop offset="0%" stop-color="#2e2416" stop-opacity="1" />
+            <stop offset="50%" stop-color="#1a1410" stop-opacity="1" />
+            <stop offset="100%" stop-color="#0d0c09" stop-opacity="1" />
+          </radialGradient>
+          <!-- Screen inner glow -->
+          <radialGradient id="screenGlow" cx="50%" cy="25%" r="50%">
+            <stop offset="0%" stop-color="rgba(196,169,107,0.08)" stop-opacity="1" />
+            <stop offset="100%" stop-color="rgba(196,169,107,0)" stop-opacity="1" />
+          </radialGradient>
+          <!-- Specular edge highlight -->
+          <linearGradient id="specularLeft" x1="0%" y1="10%" x2="0%" y2="90%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0)" stop-opacity="1" />
+            <stop offset="25%" stop-color="rgba(255,255,255,0.22)" stop-opacity="1" />
+            <stop offset="55%" stop-color="rgba(255,255,255,0.12)" stop-opacity="1" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" stop-opacity="1" />
+          </linearGradient>
+          <!-- Bezel reflection diagonal -->
+          <linearGradient id="bezelReflect" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.04)" stop-opacity="1" />
+            <stop offset="35%" stop-color="rgba(255,255,255,0)" stop-opacity="1" />
+          </linearGradient>
+          <clipPath id="phoneClip">
+            <rect x="6" y="6" width="248" height="478" rx="34" />
+          </clipPath>
+        </defs>
+
+        <!-- Phone body -->
+        <rect x="6" y="6" width="248" height="478" rx="34" fill="url(#phoneBody)" stroke="rgba(196,169,107,0.12)"
+          stroke-width="1.5" />
+        <!-- Outer rim subtle highlight (top edge) -->
+        <rect x="7" y="7" width="246" height="15" rx="27" fill="rgba(255,255,255,0.025)" />
+
+        <!-- Screen -->
+        <rect x="14" y="14" width="232" height="462" rx="28" fill="url(#screenDepth)" />
+        <!-- Screen inner glow overlay -->
+        <rect x="14" y="14" width="232" height="220" rx="28" fill="url(#screenGlow)" />
+
+        <!-- Specular left-edge highlight strip -->
+        <rect x="14" y="30" width="1.5" height="420" rx="1" fill="url(#specularLeft)" />
+
+        <!-- Bezel reflection diagonal sheen -->
+        <rect x="14" y="14" width="232" height="462" rx="28" fill="url(#bezelReflect)" clip-path="url(#phoneClip)" />
+
+        <!-- Notch -->
+        <rect x="100" y="19" width="60" height="16" rx="8" fill="#080706" />
+
+        <!-- ── Screen content ── -->
+        <!-- Time — slightly dim (date strip) -->
+        <text x="130" y="56" font-family="Inter,sans-serif" font-size="11" font-weight="200"
+          fill="rgba(244,242,239,0.38)" text-anchor="middle" letter-spacing="2">09:41</text>
+
+        <!-- Separator line -->
+        <line x1="60" y1="73" x2="200" y2="73" stroke="rgba(196,169,107,0.12)" stroke-width="0.5" />
+
+        <!-- TELOS wordmark on screen -->
+        <text x="130" y="103" font-family="Georgia,serif" font-size="13" font-weight="400" fill="rgba(196,169,107,0.72)"
+          text-anchor="middle" letter-spacing="6">TELOS</text>
+
+        <!-- Date — slightly dimmer -->
+        <text x="130" y="127" font-family="Inter,sans-serif" font-size="7.5" font-weight="300"
+          fill="rgba(154,149,144,0.42)" text-anchor="middle" letter-spacing="2">WEDNESDAY 26</text>
+
+        <!-- Day strip dots -->
+        <circle cx="72" cy="152" r="11.5" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.055)"
+          stroke-width="0.5" />
+        <text x="72" y="156" font-family="Inter,sans-serif" font-size="6.5" fill="rgba(154,149,144,0.38)"
+          text-anchor="middle">M</text>
+
+        <circle cx="100" cy="152" r="11.5" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.055)"
+          stroke-width="0.5" />
+        <text x="100" y="156" font-family="Inter,sans-serif" font-size="6.5" fill="rgba(154,149,144,0.38)"
+          text-anchor="middle">T</text>
+
+        <!-- Active day — brightest in center -->
+        <circle cx="130" cy="152" r="13" fill="rgba(196,169,107,0.88)" />
+        <text x="130" y="156.5" font-family="Inter,sans-serif" font-size="6.5" font-weight="500" fill="#0a0a0a"
+          text-anchor="middle">W</text>
+
+        <circle cx="160" cy="152" r="11.5" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.055)"
+          stroke-width="0.5" />
+        <text x="160" y="156" font-family="Inter,sans-serif" font-size="6.5" fill="rgba(154,149,144,0.38)"
+          text-anchor="middle">T</text>
+
+        <circle cx="188" cy="152" r="11.5" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.055)"
+          stroke-width="0.5" />
+        <text x="188" y="156" font-family="Inter,sans-serif" font-size="6.5" fill="rgba(154,149,144,0.38)"
+          text-anchor="middle">F</text>
+
+        <!-- Intentions label — dim -->
+        <text x="40" y="192" font-family="Inter,sans-serif" font-size="6.5" font-weight="300"
+          fill="rgba(154,149,144,0.3)" letter-spacing="2">TODAY'S INTENTIONS</text>
+
+        <!-- Item 1 — done, dim -->
+        <circle cx="54" cy="214" r="8.5" fill="rgba(196,169,107,0.08)" stroke="rgba(196,169,107,0.45)"
+          stroke-width="1" />
+        <polyline points="50.5,214 53.5,217 58,210.5" fill="none" stroke="rgba(196,169,107,0.75)" stroke-width="1.2"
+          stroke-linecap="round" stroke-linejoin="round" />
+        <text x="70" y="218" font-family="Inter,sans-serif" font-size="8.5" font-weight="300"
+          fill="rgba(154,149,144,0.52)" text-decoration="line-through">Morning meditation</text>
+
+        <!-- Item 2 — done, dim -->
+        <circle cx="54" cy="240" r="8.5" fill="rgba(196,169,107,0.08)" stroke="rgba(196,169,107,0.45)"
+          stroke-width="1" />
+        <polyline points="50.5,240 53.5,243 58,236.5" fill="none" stroke="rgba(196,169,107,0.75)" stroke-width="1.2"
+          stroke-linecap="round" stroke-linejoin="round" />
+        <text x="70" y="244" font-family="Inter,sans-serif" font-size="8.5" font-weight="300"
+          fill="rgba(154,149,144,0.52)" text-decoration="line-through">Read 20 pages</text>
+
+        <!-- Item 3 — active, brightest (center focus) -->
+        <circle cx="54" cy="266" r="8.5" fill="none" stroke="rgba(196,169,107,0.3)" stroke-width="1" />
+        <text x="70" y="270" font-family="Inter,sans-serif" font-size="8.5" font-weight="300"
+          fill="rgba(244,242,239,0.9)">Write journal entry</text>
+
+        <!-- Item 4 — upcoming, slightly dimmer -->
+        <circle cx="54" cy="292" r="8.5" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+        <text x="70" y="296" font-family="Inter,sans-serif" font-size="8.5" font-weight="300"
+          fill="rgba(244,242,239,0.65)">Evening walk</text>
+
+        <!-- Item 5 — dimmest -->
+        <circle cx="54" cy="318" r="8.5" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+        <text x="70" y="322" font-family="Inter,sans-serif" font-size="8.5" font-weight="300"
+          fill="rgba(244,242,239,0.42)">Deep work — 2 hrs</text>
+
+        <!-- Progress -->
+        <line x1="40" y1="348" x2="220" y2="348" stroke="rgba(255,255,255,0.055)" stroke-width="1.5" />
+        <line x1="40" y1="348" x2="112" y2="348" stroke="rgba(196,169,107,0.65)" stroke-width="1.5" />
+        <text x="40" y="365" font-family="Inter,sans-serif" font-size="6.5" font-weight="300"
+          fill="rgba(154,149,144,0.3)" letter-spacing="1.5">PROGRESS</text>
+        <text x="220" y="365" font-family="Inter,sans-serif" font-size="6.5" font-weight="400"
+          fill="rgba(196,169,107,0.6)" text-anchor="end">40%</text>
+
+        <!-- Bottom atmospheric fade -->
+        <rect x="14" y="400" width="232" height="76" rx="0" fill="url(#screenDepth)" opacity="0.7" />
+      </svg>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 2: STILLNESS ─── -->
+  <section id="stillness">
+    <div class="stillness-inner">
+      <p class="stillness-label" data-reveal>Philosophy</p>
+
+      <!-- "Most apps ask for more." — 'more' has fractionally slower entrance -->
+      <p class="stillness-line" data-reveal id="stillnessLine1">
+        <span class="stillness-word-normal">Most apps ask for&nbsp;</span><span class="stillness-word-more">more.</span>
+      </p>
+
+      <p class="stillness-line italic delay1" data-reveal>Telos helps you focus on less.</p>
+      <div style="height:1px; background: rgba(196,169,107,0.1); max-width:200px; margin: 2.5rem auto;"></div>
+      <p class="stillness-line delay2" data-reveal style="font-size: clamp(1.5rem, 3vw, 2.2rem); color: var(--ash);">Not
+        another tracker.</p>
+      <p class="stillness-line delay3 italic" data-reveal style="font-size: clamp(1.5rem, 3vw, 2.2rem);">A companion for
+        intentional living.</p>
+    </div>
+  </section>
+
+  <!-- ─── GOLD HAIRLINE §2→§3 ─── -->
+  <div class="gold-hairline" id="hairline1" aria-hidden="true"></div>
+
+  <!-- ─── SECTION 3: INTENTIONS ─── -->
+  <section id="intentions">
+    <div class="sticky-layout">
+      <div class="sticky-text">
+        <div class="section-label" data-reveal>01 — Intentions</div>
+        <h2 class="section-heading" data-reveal>Start with<br>intention.</h2>
+        <p class="section-body" data-reveal>
+          Each day begins with clarity. Set your intentions, not your tasks. Telos guides you toward what matters, not
+          just what's due.
+        </p>
+        <div class="gold-rule" style="margin-top: 2.5rem;">
+          <div class="gold-rule-dot"></div>
+        </div>
+        <p class="section-body" data-reveal style="transition-delay: 0.5s;">
+          Daily intentions. Recurring rhythms. Progress you can feel. Everything displayed with quiet, deliberate
+          simplicity.
+        </p>
+      </div>
+
+      <div class="sticky-phone">
+        <div class="phone-mockup" id="intentionsPhone">
+          <div class="phone-screen">
+            <p class="phone-date">Wednesday · June 26</p>
+            <div class="phone-day-strip" id="dayStrip">
+              <div class="day-dot">M</div>
+              <div class="day-dot">T</div>
+              <div class="day-dot active">W</div>
+              <div class="day-dot">T</div>
+              <div class="day-dot">F</div>
+            </div>
+            <p class="phone-section-label">Today's Intentions</p>
+            <div class="intention-item" id="int1">
+              <div class="intention-circle done"></div>
+              <span class="intention-text done">Morning meditation</span>
+            </div>
+            <div class="intention-item" id="int2">
+              <div class="intention-circle done"></div>
+              <span class="intention-text done">Read 20 pages</span>
+            </div>
+            <div class="intention-item" id="int3">
+              <div class="intention-circle"></div>
+              <span class="intention-text">Write journal entry</span>
+            </div>
+            <div class="intention-item" id="int4">
+              <div class="intention-circle"></div>
+              <span class="intention-text">Evening walk</span>
+            </div>
+            <div class="intention-item" id="int5">
+              <div class="intention-circle"></div>
+              <span class="intention-text">Deep work — 2 hours</span>
+            </div>
+            <div class="phone-progress-wrap">
+              <div class="progress-label">Progress <span id="progPercent">40%</span></div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progFill" style="width:40%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 5: JOURNAL ─── -->
+  <section id="journal">
+    <div class="journal-inner">
+      <div class="book-wrap">
+        <div class="book">
+          <div class="book-page-behind"></div>
+          <div class="book-cover">
+            <div class="book-bookmark" aria-hidden="true"></div>
+            <div>
+              <p class="book-title">Journal</p>
+              <p class="book-date" style="margin-top:4px;">June 2026</p>
+            </div>
+            <div class="book-lines">
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+              <div class="book-line"></div>
+            </div>
+            <p class="book-date" style="font-size:0.5rem; opacity:0.45;">26 entries this month</p>
+          </div>
+          <div class="book-shadow"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label" data-reveal>02 — Reflection</div>
+        <h2 class="section-heading" data-reveal>Reflect on<br>your day.</h2>
+        <p class="section-body" data-reveal>
+          The journal in Telos isn't a form to fill. It's a space to breathe. Write freely, add photos, attach voice
+          notes. Your reflections accumulate quietly into something meaningful.
+        </p>
+        <div class="gold-rule">
+          <div class="gold-rule-dot"></div>
+        </div>
+        <p class="section-body" data-reveal style="transition-delay:0.45s;">
+          Each entry is a page in a longer story — one you're writing one day at a time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 6: VOICE ─── -->
+  <section id="voice">
+    <div class="voice-inner">
+      <p class="section-label" data-reveal style="text-align:center;">03 — Voice to Thought</p>
+      <h2 class="section-heading" data-reveal style="text-align:center; font-size: clamp(2.5rem, 6vw, 4.5rem);">Just
+        speak.<br>We'll handle the writing.</h2>
+      <div class="waveform" id="waveform" aria-hidden="true"></div>
+      <p class="transcribed-text" data-reveal id="transcribedText">
+        "Today I felt grateful for the small things — a quiet morning, a good cup of coffee, a moment of stillness
+        before the world woke up&hellip;"<span class="cursor"></span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 7: PRIVATE ─── -->
+  <section id="private">
+    <div class="vault-inner">
+      <div class="vault-icon" aria-hidden="true">
+        <div class="vault-ring">
+          <span class="vault-lock">🔒</span>
+        </div>
+      </div>
+      <p class="section-label" data-reveal style="text-align:center;">04 — Privacy</p>
+      <h2 class="section-heading" data-reveal style="text-align:center; font-size: clamp(2rem, 5vw, 3.5rem);">Some
+        thoughts<br>are only yours.</h2>
+      <p class="section-body" data-reveal style="margin:0 auto; text-align:center;">
+        Hidden journals. Passcode-protected entries. Your most private reflections, locked away. Telos will never read,
+        share, or sell what you write.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── GOLD HAIRLINE §7→§8 ─── -->
+  <div class="gold-hairline" id="hairline2" aria-hidden="true"></div>
+
+  <!-- ─── SECTION 8: PROGRESS ─── -->
+  <section id="progress-section">
+    <div class="progress-inner">
+      <div>
+        <p class="section-label" data-reveal>05 — Growth</p>
+        <h2 class="section-heading" data-reveal>Growth<br>you can see.</h2>
+        <p class="section-body" data-reveal>
+          Days become weeks. Weeks become months. Your streaks and patterns emerge — not as pressure, but as evidence of
+          who you're becoming.
+        </p>
+        <div class="stats-row">
+          <div class="stat-item">
+            <p class="stat-num">26</p>
+            <p class="stat-label">Day streak</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-num">94%</p>
+            <p class="stat-label">Completion</p>
+          </div>
+          <div class="stat-item">
+            <p class="stat-num">148</p>
+            <p class="stat-label">Journal entries</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="streak-grid" id="streakGrid" aria-label="Streak calendar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 9: BACKUP ─── -->
+  <section id="backup">
+    <div class="backup-inner">
+      <p class="section-label" data-reveal style="text-align:center;">06 — Your Data</p>
+      <h2 class="section-heading" data-reveal style="text-align:center; font-size: clamp(2rem, 5vw, 3rem);">Your
+        journey<br>stays with you.</h2>
+      <div class="cloud-animation" aria-hidden="true">
+        <div class="cloud-device">📱</div>
+        <div class="cloud-dots">
+          <div class="cloud-dot"></div>
+          <div class="cloud-dot"></div>
+          <div class="cloud-dot"></div>
+          <div class="cloud-dot"></div>
+          <div class="cloud-dot"></div>
+        </div>
+        <div class="cloud-device" style="font-size:1.3rem;">☁</div>
+        <div class="cloud-dots">
+          <div class="cloud-dot" style="animation-direction:reverse;"></div>
+          <div class="cloud-dot" style="animation-direction:reverse;"></div>
+          <div class="cloud-dot" style="animation-direction:reverse;"></div>
+          <div class="cloud-dot" style="animation-direction:reverse;"></div>
+          <div class="cloud-dot" style="animation-direction:reverse;"></div>
+        </div>
+        <div class="cloud-device">📱</div>
+      </div>
+      <p class="section-body" data-reveal style="margin:0 auto; text-align:center;">
+        Google Drive backup keeps every entry safe. Switch phones, reinstall, start fresh — your journey is always
+        there, waiting for you.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 10: FINAL CTA ─── -->
+  <section id="cta-final">
+    <div id="particles2" aria-hidden="true"></div>
+
+    <p class="cta-eyebrow" data-reveal>Begin your journey</p>
+
+    <div class="cta-phone-final" data-reveal>
+      <svg viewBox="0 0 200 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="finalBody" x1="0%" y1="0%" x2="15%" y2="100%">
+            <stop offset="0%" stop-color="#1a1510" />
+            <stop offset="100%" stop-color="#0c0b09" />
+          </linearGradient>
+          <radialGradient id="finalScreen" cx="50%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#2a2318" />
+            <stop offset="100%" stop-color="#0d0c0a" />
+          </radialGradient>
+          <linearGradient id="finalSpecular" x1="0%" y1="10%" x2="0%" y2="90%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0)" />
+            <stop offset="30%" stop-color="rgba(255,255,255,0.2)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+          </linearGradient>
+        </defs>
+        <rect x="4" y="4" width="192" height="372" rx="28" fill="url(#finalBody)" stroke="rgba(196,169,107,0.18)"
+          stroke-width="1" />
+        <rect x="10" y="10" width="180" height="360" rx="24" fill="url(#finalScreen)" />
+        <!-- Specular highlight -->
+        <rect x="10" y="25" width="1" height="320" rx="1" fill="url(#finalSpecular)" />
+        <rect x="78" y="15" width="44" height="12" rx="6" fill="#080706" />
+        <text x="100" y="80" font-family="Georgia,serif" font-size="10" font-weight="400" fill="rgba(196,169,107,0.78)"
+          text-anchor="middle" letter-spacing="5">TELOS</text>
+        <line x1="40" y1="92" x2="160" y2="92" stroke="rgba(196,169,107,0.1)" stroke-width="0.5" />
+        <text x="100" y="130" font-family="Georgia,serif" font-size="8.5" font-style="italic"
+          fill="rgba(244,242,239,0.38)" text-anchor="middle">Small Steps.</text>
+        <text x="100" y="148" font-family="Georgia,serif" font-size="8.5" font-style="italic"
+          fill="rgba(244,242,239,0.38)" text-anchor="middle">Great Journeys.</text>
+        <circle cx="100" cy="250" r="52" fill="none" stroke="rgba(196,169,107,0.055)" stroke-width="1" />
+        <circle cx="100" cy="250" r="36" fill="none" stroke="rgba(196,169,107,0.09)" stroke-width="1" />
+        <circle cx="100" cy="250" r="18" fill="rgba(196,169,107,0.07)" stroke="rgba(196,169,107,0.22)"
+          stroke-width="1" />
+        <text x="100" y="254.5" font-family="Georgia,serif" font-size="8" fill="rgba(196,169,107,0.55)"
+          text-anchor="middle">◈</text>
+      </svg>
+    </div>
+
+    <h2 class="cta-headline" data-reveal>Small Steps.<br>Great Journeys.</h2>
+    <p class="cta-sub" data-reveal>A calmer way to move forward.</p>
+
+    <div class="cta-buttons" data-reveal>
+      <a href="https://play.google.com/store" class="btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          aria-hidden="true">
+          <path d="M12 19V5m0 14l-4-4m4 4l4-4" />
+          <rect x="3" y="19" width="18" height="1.5" rx="0.75" />
+        </svg>
+        Download on Google Play
+      </a>
+      <a href="#hero" class="btn-secondary">Watch Preview</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Telos · Intentional Living · All rights reserved</p>
+  </footer>
+
+  <script>
+    /* ══════════════════════════════════════════════
+       TELOS — REFINED INTERACTIONS
+       All CSS/JS only, no libraries
+    ══════════════════════════════════════════════ */
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ─── 1. TELOS LETTERFORM STAGGER ─── */
+    (function () {
+      const title = document.getElementById('heroTitle');
+      if (!title) return;
+      const text = 'TELOS';
+      // Base delays: each letter offset by 0.08s, with subtle variation
+      // 'S' (last) gets a tiny extra push for feel
+      const delays = [0.55, 0.63, 0.70, 0.77, 0.87];
+      title.innerHTML = text.split('').map((ch, i) =>
+        `<span class="telos-letter" style="animation-delay:${delays[i]}s">${ch}</span>`
+      ).join('');
+    })();
+
+    /* ─── 2. PARTICLES ─── */
+    function createParticles(containerId, count) {
+      const container = document.getElementById(containerId);
+      if (!container || prefersReducedMotion) return;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.cssText = [
+          `left:${Math.random() * 100}%`,
+          `top:${Math.random() * 100}%`,
+          `--dur:${6 + Math.random() * 9}s`,
+          `--delay:${-(Math.random() * 12)}s`,
+          `--dy:${-30 - Math.random() * 70}px`,
+          `--dx:${-35 + Math.random() * 70}px`,
+          `--op:${0.12 + Math.random() * 0.32}`,
+          `width:${1 + Math.random() * 2.5}px`,
+          `height:${1 + Math.random() * 2.5}px`,
+        ].join(';');
+        container.appendChild(p);
+      }
+    }
+    createParticles('particles', 55);
+    createParticles('particles2', 45);
+
+    /* ─── 3. NAV ─── */
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ─── 4. NAV CTA: animated conic border sweep on hover ─── */
+    (function () {
+      const btn = document.getElementById('navCta');
+      if (!btn || prefersReducedMotion) return;
+      let raf, angle = 0, running = false;
+
+      btn.addEventListener('mouseenter', () => {
+        running = true;
+        angle = 0;
+        const start = performance.now();
+        const duration = 700; // ms for full sweep
+        function tick(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const deg = t * 360;
+          btn.style.setProperty('--sweep', deg + 'deg');
+          if (t < 1) raf = requestAnimationFrame(tick);
+          else { btn.style.setProperty('--sweep', '360deg'); }
+        }
+        raf = requestAnimationFrame(tick);
+      });
+      btn.addEventListener('mouseleave', () => {
+        cancelAnimationFrame(raf);
+        btn.style.setProperty('--sweep', '0deg');
+        running = false;
+      });
+    })();
+
+    /* ─── 5. HERO FOG PARALLAX ─── */
+    (function () {
+      const fog = document.getElementById('hero-fog');
+      const heroPhone = document.getElementById('heroPhone');
+      const heroTitle = document.querySelector('.hero-title');
+      let ticking = false;
+
+      function updateHero() {
+        const sy = window.scrollY;
+        const heroH = document.getElementById('hero').offsetHeight;
+        const progress = Math.min(sy / heroH, 1);
+
+        // Fog shifts very subtly — 2% lateral, 1.5% vertical
+        if (fog) {
+          const shiftX = progress * 2;
+          const shiftY = progress * 1.5;
+          fog.style.transform = `translate(${shiftX}%, ${shiftY}%)`;
+        }
+        if (heroTitle) {
+          heroTitle.style.transform = `translateY(${sy * 0.18}px)`;
+          heroTitle.style.opacity = Math.max(0, 1 - sy / 380);
+        }
+        if (heroPhone) {
+          heroPhone.style.transform = `translateX(-50%) translateY(${sy * -0.13}px)`;
+          heroPhone.style.opacity = Math.max(0, 1 - sy / 480);
+        }
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) { requestAnimationFrame(updateHero); ticking = true; }
+      }, { passive: true });
+    })();
+
+    /* ─── 6. REVEAL ON SCROLL ─── */
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('reveal');
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('reveal');
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.stillness-inner, .voice-inner, .vault-inner, .backup-inner').forEach(el => sectionObserver.observe(el));
+
+    /* ─── 7. GOLD HAIRLINE DRAW ─── */
+    (function () {
+      const hairlineObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('draw');
+            hairlineObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+
+      ['hairline1', 'hairline2'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) hairlineObserver.observe(el);
+      });
+    })();
+
+    /* ─── 8. SINE-WAVE WAVEFORM ─── */
+    (function () {
+      const container = document.getElementById('waveform');
+      if (!container) return;
+
+      const barCount = 36;
+      const baseHeights = [20, 28, 16, 35, 42, 30, 18, 45, 38, 22, 50, 40, 25, 55, 48, 32, 20, 44, 36, 28, 52, 42, 18, 38, 46, 30, 22, 48, 34, 26, 40, 50, 28, 16, 36, 24];
+      const bars = [];
+
+      for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        const h = baseHeights[i % baseHeights.length];
+        bar.style.height = h + 'px';
+        bar.dataset.baseHeight = h;
+        container.appendChild(bar);
+        bars.push(bar);
+      }
+
+      if (prefersReducedMotion) return;
+
+      // Traveling sine wave: each bar's scale is driven by sin(time * freq + phaseOffset * i)
+      const freq = 1.4; // radians per second
+      const phaseStep = 0.28; // radians between adjacent bars
+
+      let startTime = null;
+      function animateWave(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const t = (timestamp - startTime) / 1000;
+
+        bars.forEach((bar, i) => {
+          const base = parseFloat(bar.dataset.baseHeight);
+          // sine wave modulates scale between 0.18 and 1.0
+          const sineVal = Math.sin(t * freq + i * phaseStep);
+          const normalized = (sineVal + 1) / 2; // 0..1
+          const scale = 0.18 + normalized * 0.82;
+          const opacity = 0.25 + normalized * 0.6;
+          bar.style.transform = `scaleY(${scale.toFixed(3)})`;
+          bar.style.opacity = opacity.toFixed(3);
+        });
+
+        requestAnimationFrame(animateWave);
+      }
+      requestAnimationFrame(animateWave);
+    })();
+
+    /* ─── 9. STREAK GRID ─── */
+    (function () {
+      const grid = document.getElementById('streakGrid');
+      if (!grid) return;
+      const total = 28, doneUpTo = 25;
+      for (let i = 0; i < total; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'streak-cell';
+        if (i < doneUpTo) cell.classList.add('done');
+        if (i === doneUpTo) cell.classList.add('today');
+        grid.appendChild(cell);
+      }
+    })();
+
+    /* ─── 10. INTENTIONS PHONE ANIMATION ─── */
+    (function () {
+      const section = document.getElementById('intentions');
+      if (!section) return;
+      let fired = false;
+      const obs = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !fired) {
+          fired = true;
+          document.querySelectorAll('.intention-item').forEach((item, i) => {
+            setTimeout(() => item.classList.add('visible'), i * 180 + 250);
+          });
+          setTimeout(() => {
+            const fill = document.getElementById('progFill');
+            if (fill) fill.style.width = '40%';
+          }, 1400);
+        }
+      }, { threshold: 0.28 });
+      obs.observe(section);
+    })();
+
+    /* ─── 11. FINAL CTA: BREATHING RADIAL GRADIENT ─── */
+    (function () {
+      const cta = document.getElementById('cta-final');
+      if (!cta || prefersReducedMotion) return;
+
+      const period = 12000; // 12s full cycle
+      const amplitude = 4; // ±4% drift
+
+      function breathe(timestamp) {
+        const t = timestamp / period;
+        // Two slightly offset sine waves for X and Y so it doesn't feel mechanical
+        const rx = 50 + amplitude * Math.sin(t * Math.PI * 2);
+        const ry = 50 + amplitude * Math.sin(t * Math.PI * 2 + 1.1); // phase offset
+
+        cta.style.background = `radial-gradient(ellipse 70% 60% at ${rx.toFixed(2)}% ${ry.toFixed(2)}%, #1a1612 0%, #0a0a0a 70%)`;
+        requestAnimationFrame(breathe);
+      }
+      requestAnimationFrame(breathe);
+    })();
+  </script>
+</body>
+
+</html>

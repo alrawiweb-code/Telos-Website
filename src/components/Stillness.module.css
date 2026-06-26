@@ -1,0 +1,53 @@
+.stillness {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  padding: 8rem 2rem;
+}
+
+.inner {
+  max-width: 780px;
+  text-align: center;
+}
+
+.label {
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4rem;
+  display: block;
+}
+
+.line {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--smoke);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.italic {
+  font-style: italic;
+  color: var(--ash);
+}
+
+.divider {
+  height: 1px;
+  background: rgba(196, 169, 107, 0.1);
+  max-width: 200px;
+  margin: 2.5rem auto;
+}
+
+.wordMore {
+  display: inline-block;
+  color: var(--gold);
+}
+
+.wordNormal {
+  display: inline-block;
+}

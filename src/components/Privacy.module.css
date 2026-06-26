@@ -1,0 +1,57 @@
+.private {
+  min-height: 80vh;
+  background: #09090a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 2rem;
+}
+
+.inner {
+  text-align: center;
+  max-width: 700px;
+}
+
+.vaultIcon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 3rem;
+  position: relative;
+}
+
+.vaultRing {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 169, 107, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vaultPulse 4s ease-in-out infinite;
+}
+
+.vaultRing::before,
+.vaultRing::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 169, 107, 0.07);
+  animation: vaultPulse 4s ease-in-out infinite;
+}
+
+.vaultRing::before {
+  inset: -12px;
+  animation-delay: 0.5s;
+}
+
+.vaultRing::after {
+  inset: -24px;
+  animation-delay: 1s;
+}
+
+.vaultLock {
+  font-size: 2rem;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+}

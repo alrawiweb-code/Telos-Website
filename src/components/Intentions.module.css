@@ -1,0 +1,268 @@
+.intentions {
+  min-height: 180vh;
+  display: flex;
+  align-items: flex-start;
+  background: #0d0d0b;
+  padding: 8rem 0;
+}
+
+.stickyLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  gap: 4rem;
+}
+
+.stickyText {
+  padding-top: 10rem;
+}
+
+.stickyPhone {
+  position: sticky;
+  top: 20vh;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── PHONE MOCKUP ─── */
+.phoneMockup {
+  width: 240px;
+  background: linear-gradient(175deg, #1a1510 0%, #0f0d0b 60%);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset -1px 0 0 rgba(0, 0, 0, 0.4),
+    0 40px 80px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 20px 40px rgba(196, 169, 107, 0.05);
+  filter: drop-shadow(0 8px 24px rgba(196, 169, 107, 0.04));
+}
+
+.phoneMockup::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8%;
+  bottom: 8%;
+  width: 1px;
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(255, 255, 255, 0.25) 25%,
+      rgba(255, 255, 255, 0.14) 55%,
+      transparent 100%);
+  border-radius: 1px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.phoneMockup::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 36px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.025) 0%,
+      transparent 40%,
+      transparent 60%,
+      rgba(255, 255, 255, 0.01) 100%);
+  pointer-events: none;
+  z-index: 9;
+}
+
+.phoneScreen {
+  padding: 20px 16px;
+  min-height: 420px;
+  background: radial-gradient(ellipse 70% 50% at 50% 30%,
+      rgba(196, 169, 107, 0.045) 0%,
+      transparent 70%);
+  position: relative;
+  animation: screenPulse 5s ease-in-out infinite;
+}
+
+@keyframes screenPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.phoneDate {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: rgba(154, 149, 144, 0.45);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.phoneDayStrip {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+.dayDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(154, 149, 144, 0.4);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.4s ease;
+}
+
+.dayDotActive {
+  background: var(--gold);
+  color: var(--ink);
+  border-color: var(--gold);
+  font-weight: 500;
+}
+
+.phoneSectionLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #444;
+  margin-bottom: 0.75rem;
+}
+
+.intentionItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Progressive brightness */
+.intentionItem:nth-child(3) .intentionText {
+  color: rgba(244, 242, 239, 0.6);
+}
+.intentionItem:nth-child(4) .intentionText {
+  color: rgba(244, 242, 239, 0.85);
+}
+.intentionItem:nth-child(5) .intentionText {
+  color: rgba(244, 242, 239, 0.95);
+}
+.intentionItem:nth-child(6) .intentionText {
+  color: rgba(244, 242, 239, 0.7);
+}
+.intentionItem:nth-child(7) .intentionText {
+  color: rgba(244, 242, 239, 0.5);
+}
+
+.intentionCircle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.13);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease;
+  position: relative;
+}
+
+.intentionCircleDone {
+  border-color: var(--gold);
+  background: rgba(196, 169, 107, 0.13);
+}
+
+.intentionCircleDone::after {
+  content: '';
+  width: 8px;
+  height: 5px;
+  border-left: 1.5px solid var(--gold);
+  border-bottom: 1.5px solid var(--gold);
+  transform: rotate(-45deg) translateY(-1px);
+  display: block;
+}
+
+.intentionText {
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(244, 242, 239, 0.75);
+  letter-spacing: 0.02em;
+}
+
+.intentionTextDone {
+  color: rgba(154, 149, 144, 0.55);
+  text-decoration: line-through;
+  text-decoration-color: rgba(154, 149, 144, 0.3);
+}
+
+.phoneProgressWrap {
+  margin-top: 1.25rem;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.progressLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #444;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progressLabel span {
+  color: var(--gold);
+}
+
+.progressBar {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(to right, var(--gold), #e8c97e);
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .intentions {
+    padding: 4rem 0;
+  }
+  .stickyLayout {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 0 1.5rem;
+  }
+  .stickyText {
+    padding-top: 2rem;
+  }
+  .stickyPhone {
+    position: relative;
+    top: auto;
+    height: auto;
+  }
+}

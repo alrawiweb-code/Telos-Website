@@ -60,3 +60,17 @@
     opacity: 0;
   }
 }
+
+@media (max-width: 768px) {
+  .voice {
+    padding: 4rem 1.5rem;
+    min-height: 60vh;
+  }
+  .waveform {
+    height: 40px;
+    margin: 2rem auto;
+  }
+  .transcribedText {
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+  }
+}

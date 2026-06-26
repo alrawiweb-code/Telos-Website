@@ -51,3 +51,16 @@
 .wordNormal {
   display: inline-block;
 }
+
+@media (max-width: 768px) {
+  .stillness {
+    padding: 4rem 1.5rem;
+    min-height: 70vh;
+  }
+  .label {
+    margin-bottom: 2rem;
+  }
+  .line {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+}

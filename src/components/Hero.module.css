@@ -51,7 +51,7 @@
 
 .title {
   font-family: var(--font-display, sans-serif);
-  font-size: clamp(5rem, 14vw, 11rem);
+  font-size: clamp(2.8rem, 11vw, 11rem);
   font-weight: 300;
   letter-spacing: 0.12em;
   line-height: 0.9;
@@ -76,7 +76,7 @@
 
 .tagline {
   font-family: var(--font-display, sans-serif);
-  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-size: clamp(1.1rem, 4vw, 2rem);
   font-weight: 300;
   font-style: italic;
   color: var(--ash);
@@ -222,7 +222,25 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    height: 180vh; /* Shorter scroll needed on mobile */
+  }
+  .stickyContainer {
+    padding: 0 1.5rem;
+  }
   .title {
-    font-size: 4rem;
+    font-size: clamp(2.8rem, 11vw, 4.5rem);
+    letter-spacing: 0.08em;
+  }
+  .eyebrow {
+    font-size: 0.55rem;
+    margin-bottom: 1.5rem;
+  }
+  .sub {
+    font-size: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+  .phoneWrap {
+    width: 200px;
   }
 }
